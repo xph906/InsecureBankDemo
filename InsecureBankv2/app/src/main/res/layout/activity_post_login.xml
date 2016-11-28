@@ -49,6 +49,20 @@
     <TableRow android:paddingTop="20px" android:gravity="center"
         android:layout_width="match_parent"
         android:paddingLeft="5dp" android:paddingRight="5dp">
+        <Button
+            android:id="@+id/button_NearbyATM"
+            android:text="Nearby ATM"
+            android:layout_weight="1"
+            android:padding="20dp"
+            android:textColor="@color/wallet_bright_foreground_holo_dark"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:background="@drawable/roundbutton" />
+    </TableRow>
+
+    <TableRow android:paddingTop="20px" android:gravity="center"
+        android:layout_width="match_parent"
+        android:paddingLeft="5dp" android:paddingRight="5dp">
 
         <TextView
             android:id="@+id/rootStatus"
@@ -60,5 +74,7 @@
             android:gravity="center"
             android:textColor="#ff000fff"/>
     </TableRow>
+
+
 
 </TableLayout>

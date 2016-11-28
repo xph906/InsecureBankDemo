@@ -26,16 +26,19 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 /*
@@ -57,15 +60,16 @@ public class DoLogin extends Activity {
 	String serverip = "";
 	String serverport = "";
 	String protocol = "http://";
+
 	BufferedReader reader;
 	SharedPreferences serverDetails;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_do_login);
 		finish();
-
         // Get Server details from Shared Preference file.
 		serverDetails = PreferenceManager.getDefaultSharedPreferences(this);
 		serverip = serverDetails.getString("serverip", null);
@@ -85,7 +89,9 @@ public class DoLogin extends Activity {
             Toast.makeText(this, "Server path/port not set!",Toast.LENGTH_LONG).show();
 
         }
+        //sendUserIMEIIfAllowed();
 	}
+
 
 	class RequestTask extends AsyncTask < String, String, String > {
 
@@ -105,9 +111,6 @@ public class DoLogin extends Activity {
 		protected void onProgressUpdate(Integer...progress) {}
 
 		public void postData(String valueIWantToSend) throws ClientProtocolException, IOException, JSONException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-
-
-
 			// Create a new HttpClient and Post Header
 
 			HttpClient httpclient = new DefaultHttpClient();
@@ -145,9 +148,6 @@ public class DoLogin extends Activity {
 					Intent pL = new Intent(getApplicationContext(), PostLogin.class);
 					pL.putExtra("uname", username);
 					startActivity(pL);
-				} else {
-					Intent xi = new Intent(getApplicationContext(), WrongLogin.class);
-					startActivity(xi);
 				}
 			}
 		}
@@ -193,22 +193,25 @@ public class DoLogin extends Activity {
 			editor.commit();
 		}
 
-		private String convertStreamToString(InputStream in ) throws IOException {
-			// TODO Auto-generated method stub
-			try {
-				reader = new BufferedReader(new InputStreamReader( in , "UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			} in .close();
-			return sb.toString();
-		}
+
 	}
+
+    private String convertStreamToString(InputStream in ) throws IOException {
+        // TODO Auto-generated method stub
+        try {
+            reader = new BufferedReader(new InputStreamReader( in , "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line + "\n");
+        } in .close();
+        return sb.toString();
+    }
+
     // Added for handling menu operations
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

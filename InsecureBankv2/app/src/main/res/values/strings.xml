@@ -24,5 +24,7 @@
     <string name="title_activity_change_password">ChangePassword</string>
     <string name="title_activity_exit">ExitActivity</string>
     <string name="action_kill">Exit Application</string>
+    <string name="atm_string">ATM</string>
+    <string name="checkbox">Join Product Improvement Program?</string>
 
 </resources>

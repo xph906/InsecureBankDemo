@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ public class FilePrefActivity extends Activity {
 	static EditText edit_serverip;
 	//	The EditText that stores the user entered server port number
 	static EditText edit_serverport;
+    static CheckBox checkbox_participate;
 	//  The Button that handles the save preference activity
 	Button submitPref_buttonz;
 	SharedPreferences preferences;
@@ -40,6 +42,7 @@ public class FilePrefActivity extends Activity {
 		submitPref_buttonz = (Button) findViewById(R.id.submitPref_button);
 		edit_serverip = (EditText) findViewById(R.id.edittext_serverip);
 		edit_serverport = (EditText) findViewById(R.id.edittext_serverport);
+        checkbox_participate = (CheckBox) findViewById(R.id.checkbox_ppip);
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = preferences.edit();
 		submitPref_buttonz.setOnClickListener(new View.OnClickListener() {@Override
@@ -92,6 +95,7 @@ public class FilePrefActivity extends Activity {
 		// TODO Auto-generated method stub
        String serverportSaved= edit_serverport.getText().toString();
         String serveripSaved= edit_serverip.getText().toString();
+        Boolean doParticipate = checkbox_participate.isChecked();
 
         String IP_PATTERN ="^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                         "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
@@ -110,6 +114,7 @@ public class FilePrefActivity extends Activity {
             {
                 editor.putString("serverip", serveripSaved);
                 editor.putString("serverport", serverportSaved);
+                editor.putBoolean("participate", doParticipate);
                 editor.commit();
                 Toast.makeText(this, "Server Configured Successfully!!", Toast.LENGTH_LONG).show();
                 finish();

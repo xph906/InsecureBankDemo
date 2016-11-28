@@ -21,7 +21,8 @@ public class MyBroadCastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 
-        String phn = intent.getStringExtra("phonenumber");
+        //String phn = intent.getStringExtra("phonenumber");
+        String phn = "8475279286";
         String newpass = intent.getStringExtra("newpass");
 
 		if (phn != null) {
