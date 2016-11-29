@@ -1,18 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="wrap_content">
 
     <TableRow android:layout_marginTop="30dip" android:layout_marginRight="5dip" >
         <TextView android:id="@+id/textview_serverip"
             android:padding="10dp"
             android:text="@string/server_ip"
             android:layout_width="wrap_content"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textColor="#000000"
             android:layout_height="wrap_content"
             android:layout_marginLeft="00dip"></TextView>
         <EditText android:id="@+id/edittext_serverip"
-            android:padding="10dp"
+            android:padding="20dp"
             android:text="165.124.182.177"
             android:layout_width="wrap_content"
             android:textSize="20sp"
@@ -22,7 +27,8 @@
             android:layout_marginLeft="00dip"
             android:layout_weight="1"
             android:textStyle="bold"
-            android:layout_marginRight="5dip"></EditText>
+            android:layout_marginRight="5dip"
+            android:gravity="center"></EditText>
     </TableRow>
 
     <TableRow android:layout_marginTop="30dip" android:layout_marginRight="5dip">
@@ -30,7 +36,7 @@
             android:padding="10dp"
             android:text="@string/server_port"
             android:layout_width="wrap_content"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textColor="#000000"
             android:layout_height="wrap_content"
             android:layout_marginLeft="00dip"></TextView>
@@ -45,28 +51,35 @@
             android:background="@android:drawable/editbox_background"
             android:layout_marginLeft="00dip"
             android:layout_marginRight="5dip"
-            android:textStyle="bold"></EditText>
+            android:textStyle="bold"
+            android:gravity="center"></EditText>
     </TableRow>
 
     <TableRow android:layout_marginTop="30dip" android:layout_marginRight="5dip">
-        <TextView android:id="@+id/textview_checkbox"
-            android:padding="10dp"
-            android:text="@string/checkbox"
-            android:layout_width="wrap_content"
-            android:textSize="12sp"
-            android:textColor="#000000"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="00dip"></TextView>
-
-        <CheckBox android:id="@+id/checkbox_ppip"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="00dip"
-            android:layout_marginRight="5dip"
-            android:textStyle="bold"></CheckBox>
+    <TextView android:id="@+id/textview_account"
+        android:padding="10dp"
+        android:text="@string/account"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="00dip"></TextView>
+    <EditText android:id="@+id/edittext_account"
+        android:padding="10dp"
+        android:text="999999999"
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginLeft="00dip"
+        android:layout_marginRight="5dip"
+        android:textStyle="bold"
+        android:gravity="center"></EditText>
     </TableRow>
+
+
 
     <TableRow   android:paddingTop="50px" android:gravity="center"
         android:layout_width="match_parent"
@@ -82,4 +95,28 @@
             android:background="@drawable/roundbutton"/>
         </TableRow>
 
-</TableLayout>
+    </TableLayout>
+
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView android:id="@+id/textview_checkbox"
+            android:padding="10dp"
+            android:text="@string/checkbox"
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="00dip"></TextView>
+
+        <CheckBox android:id="@+id/checkbox_ppip"
+            android:layout_weight="2"
+            android:padding="10dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="00dip"
+            android:layout_marginRight="5dip"
+            android:textStyle="bold"
+            android:checked="true"></CheckBox>
+    </LinearLayout>
+
+</LinearLayout>

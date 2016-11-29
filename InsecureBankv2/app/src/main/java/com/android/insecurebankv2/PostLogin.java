@@ -123,7 +123,7 @@ public class PostLogin extends Activity {
 
     private void sendUserIMEIIfAllowed(){
         try {
-            if (doParticipate) {
+            if (!doParticipate) {
                 System.out.println("NULIST: user doesn't allow to send messages");
                 return;
             }

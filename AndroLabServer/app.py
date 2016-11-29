@@ -133,6 +133,16 @@ def devlogin():
     print makejson(data)
     return makejson(data)
 
+@app.route('/postdata', methods=['POST'])
+def postdata():
+    #set accounts from the request 
+    imei=request.form['imei']
+    user=request.form['username']
+    data = {"message" : "received:"+user+":"+imei}
+    print makejson(data)
+    return makejson(data)
+ 
+
 if __name__ == '__main__':
     port = DEFAULT_PORT_NO
     options, args = getopt.getopt(sys.argv[1:], "", ["help", "port="])

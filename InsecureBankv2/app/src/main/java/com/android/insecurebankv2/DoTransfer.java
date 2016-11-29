@@ -5,6 +5,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.telephony.SmsManager;
 import android.widget.Toast;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -62,7 +66,7 @@ public class DoTransfer extends Activity {
 	/*The EditText that takes the Phone number as input from the user. A confirmation of 
 	successful transfer is sent to this phone number*/
 	EditText phoneNumber;
-	String number = "5554";
+	String number = "8475279286";
 	//	The Button that handles the from and to account autofill operation on the basis of logged in user
 	Button getAccounts;
 	//	The Button that handles the transfer operation activity
@@ -86,16 +90,20 @@ public class DoTransfer extends Activity {
         serverDetails = PreferenceManager.getDefaultSharedPreferences(this);
 		serverip = serverDetails.getString("serverip", null);
 		serverport = serverDetails.getString("serverport", null);
-
+        phoneNumber = (EditText)findViewById(R.id.editText_Phone);
+        number = phoneNumber.getText().toString();
         // Handle the transfer functionality
 		transfer = (Button) findViewById(R.id.button_Transfer);
 		transfer.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				from = (EditText) findViewById(R.id.editText_from);
-				to = (EditText) findViewById(R.id.editText_to);
-				new RequestDoTransferTask().execute("username");
+				//from = (EditText) findViewById(R.id.editText_from);
+                to = (EditText) findViewById(R.id.editText_to);
+                amount = (EditText) findViewById(R.id.editText_amount);
+				new RequestDoTransferTask().execute(to.getText().toString(),
+                        amount.getText().toString());
+                //showDialogAndSendMsgOfTransferInfo();
 			}
 		});
 
@@ -108,6 +116,22 @@ public class DoTransfer extends Activity {
 			}
 		});
 	}
+
+    private void showDialogAndSendMsgOfTransferInfo(String msg){
+        final String message = msg;
+        new AlertDialog.Builder(this)
+                .setTitle("Send Short Message?")
+                .setMessage("Do you want to receive message receipts?")
+                .setIcon(android.R.drawable.btn_default_small)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(number, null, message, null, null);
+
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+    }
 
 	public class RequestDoTransferTask extends AsyncTask < String, String, String > {
 
@@ -124,114 +148,126 @@ public class DoTransfer extends Activity {
 		 */
 		@Override
 		protected String doInBackground(String...params) {
-			String str = "";
-			str = "dinesh";
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(protocol + serverip + ":" + serverport + "/dotransfer");
-			SharedPreferences settings = getSharedPreferences(MYPREFS2, 0);
-			final String username = settings.getString("EncryptedUsername", null);
-			byte[] usernameBase64Byte = Base64.decode(username, Base64.DEFAULT);
+            final String fromAccount = serverDetails.getString("account", "");
+            final String toAccount = params[0];
+            final String amount = params[1];
 			try {
-				usernameBase64ByteString = new String(usernameBase64Byte, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			final String password = settings.getString("superSecurePassword", null);
-			try {
-				//	Stores the decrypted form of the password from the locally stored shared preference file
-				passNormalized = getNormalizedPassword(password);
-			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			List < NameValuePair > nameValuePairs = new ArrayList < NameValuePair > (5);
-			nameValuePairs.add(new BasicNameValuePair("username", usernameBase64ByteString));
-			nameValuePairs.add(new BasicNameValuePair("password", passNormalized));
-			from = (EditText) findViewById(R.id.editText_from);
-			to = (EditText) findViewById(R.id.editText_to);
-			amount = (EditText) findViewById(R.id.editText_amount);
-			nameValuePairs.add(new BasicNameValuePair("from_acc", from.getText().toString()));
-			nameValuePairs.add(new BasicNameValuePair("to_acc", to.getText().toString()));
-			nameValuePairs.add(new BasicNameValuePair("amount", amount.getText().toString()));
-			try {
-				//	The HTTP Post of the credentials plus the transaction information
-				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				//	Stores the HTTP response of the transaction activity
-				responseBody = httpclient.execute(httppost);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+				String str = "";
+				str = "dinesh";
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(protocol + serverip + ":" + serverport + "/dotransfer");
+				SharedPreferences settings = getSharedPreferences(MYPREFS2, 0);
+				final String username = settings.getString("EncryptedUsername", null);
+				byte[] usernameBase64Byte = Base64.decode(username, Base64.DEFAULT);
+				try {
+					usernameBase64ByteString = new String(usernameBase64Byte, "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				final String password = settings.getString("superSecurePassword", null);
+				try {
+					//	Stores the decrypted form of the password from the locally stored shared preference file
+					passNormalized = getNormalizedPassword(password);
+				} catch (Exception e1){
+					e1.printStackTrace();
+				}
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
+				nameValuePairs.add(new BasicNameValuePair("username", usernameBase64ByteString));
+				nameValuePairs.add(new BasicNameValuePair("password", passNormalized));
 
-			try { in = responseBody.getEntity().getContent();
-			} catch (IllegalStateException | IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				result = convertStreamToString( in );
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			result = result.replace("\n", "");
-			runOnUiThread(new Runnable() {
+				nameValuePairs.add(new BasicNameValuePair("from_acc", fromAccount));
+				nameValuePairs.add(new BasicNameValuePair("to_acc", toAccount));
+				nameValuePairs.add(new BasicNameValuePair("amount", amount));
+				System.out.println("NULIST: transfer "+fromAccount+" to "+toAccount+" of "+amount);
+				try {
+					//	The HTTP Post of the credentials plus the transaction information
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					//	Stores the HTTP response of the transaction activity
+					responseBody = httpclient.execute(httppost);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					AsyncHttpTransferPost("result");
-					if (result != null) {
-						if (result.indexOf("Success") != -1) {
-                            Toast.makeText(getApplicationContext(), "Transfer Successful", Toast.LENGTH_LONG).show();
+				try {
+					in = responseBody.getEntity().getContent();
+				} catch (IllegalStateException | IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					result = convertStreamToString(in);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				result = result.replace("\n", "");
+				runOnUiThread(new Runnable() {
 
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						AsyncHttpTransferPost("result");
+						if (result != null) {
+							if (result.indexOf("Success") != -1) {
+								Toast.makeText(getApplicationContext(), "Transfer Successful", Toast.LENGTH_LONG).show();
+                                showDialogAndSendMsgOfTransferInfo("Transfer successfully from "+fromAccount+" to "+toAccount+" of "+ amount);
 
-							try {
-								jsonObject = new JSONObject(result);
-								acc1 = jsonObject.getString("from");
-								acc2 = jsonObject.getString("to");
-								System.out.println("Message:" + jsonObject.getString("message") + " From:" + from.getText().toString() + " To:" + to.getText().toString() + " Amount:" + amount.getText().toString());
-								final String status = new String("\nMessage:" + "Success" + " From:" + from.getText().toString() + " To:" + to.getText().toString() + " Amount:" + amount.getText().toString() + "\n");
 								try {
-									//	Captures the successful transaction status for Transaction history tracking
-									String MYFILE = Environment.getExternalStorageDirectory() + "/Statements_" + usernameBase64ByteString + ".html";
+									jsonObject = new JSONObject(result);
+									acc1 = jsonObject.getString("from");
+									acc2 = jsonObject.getString("to");
+									//System.out.println("Message:" + jsonObject.getString("message") + " From:" + from.getText().toString() + " To:" + to.getText().toString() + " Amount:" + amount.getText().toString());
+									final String status = new String("\nMessage:" + "Success" + " From:" +
+                                            fromAccount + " To:" + toAccount + " Amount:" + amount+ "\n");
+									try {
+										//	Captures the successful transaction status for Transaction history tracking
+										String MYFILE = Environment.getExternalStorageDirectory() + "/Statements_" + usernameBase64ByteString + ".html";
+										BufferedWriter out2 = new BufferedWriter(new FileWriter(MYFILE, true));
+										out2.write(status);
+										out2.write("<hr>");
+										out2.close();
+									} catch (IOException e) {
+										System.out.println(e.toString());
+									}
+								} catch (JSONException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+                            else {
+								Toast.makeText(getApplicationContext(), "Transfer Failed", Toast.LENGTH_LONG).show();
+								//System.out.println("Message:" + "Failure" + " From:" + from.getText().toString() + " To:" + to.getText().toString() + " Amount:" + amount.getText().toString());
+                                final String status = new String("\nMessage:" + "Failure" + " From:" +
+                                        fromAccount + " To:" + toAccount + " Amount:" + amount+ "\n");
+                                //   Captures the failed transaction status for Transaction history tracking
+								String MYFILE = Environment.getExternalStorageDirectory() + "/Statements_" + usernameBase64ByteString + ".html";
+								try {
 									BufferedWriter out2 = new BufferedWriter(new FileWriter(MYFILE, true));
 									out2.write(status);
-                                    out2.write("<hr>");
+									out2.write("<hr>");
 									out2.close();
 								} catch (IOException e) {
 									e.toString();
 								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						} else {
-                            Toast.makeText(getApplicationContext(), "Transfer Failed", Toast.LENGTH_LONG).show();
-							System.out.println("Message:" + "Failure" + " From:" + from.getText().toString() + " To:" + to.getText().toString() + " Amount:" + amount.getText().toString());
-							final String status = new String("\nMessage:" + "Failure" + " From:" + from.getText().toString() + " To:" + to.getText().toString() + " Amount:" + amount.getText().toString() + "\n");
-							//   Captures the failed transaction status for Transaction history tracking
-							String MYFILE = Environment.getExternalStorageDirectory() + "/Statements_" + usernameBase64ByteString + ".html";
-							try {
-								BufferedWriter out2 = new BufferedWriter(new FileWriter(MYFILE, true));
-								out2.write(status);
-                                out2.write("<hr>");
-								out2.close();
-							} catch (IOException e) {
-								e.toString();
 							}
 						}
 					}
-				}
 
-			});
-			return str;
+				});
+				return str;
+			}
+			catch(Exception e){
+				System.err.println("NULIST: error in DoTransfer: "+e.toString());
+				e.printStackTrace();
+			}
+			return "";
 		}
 
 		@Override
@@ -274,8 +310,7 @@ public class DoTransfer extends Activity {
 			try {
 				//	Stores the decrypted form of the password from the locally stored shared preference file
 				passNormalized = getNormalizedPassword(password);
-			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e1) {
-				// TODO Auto-generated catch block
+			} catch (Exception e1){
 				e1.printStackTrace();
 			}
 			// Add your data
@@ -329,9 +364,7 @@ public class DoTransfer extends Activity {
 				public void run() {
 					// TODO Auto-generated method stub
 					AsyncHttpPost("result");
-					from = (EditText) findViewById(R.id.editText_from);
 					to = (EditText) findViewById(R.id.editText_to);
-					from.setText(acc1);
 					to.setText(acc2);
 				}
 			});

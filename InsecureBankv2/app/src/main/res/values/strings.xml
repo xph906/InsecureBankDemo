@@ -10,6 +10,7 @@
     <string name="title_activity_file_pref">FilePref</string>
     <string name="server_ip">Server IP:</string>
     <string name="server_port">Server Port:</string>
+    <string name="account">Account:</string>
     <string name="pref_submit">Submit:</string>
     <string name="title_activity_setting_preferences">SettingPreferences</string>
     <string name="title_activity_login">LoginActivity</string>
