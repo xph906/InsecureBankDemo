@@ -103,7 +103,13 @@ public class DoTransfer extends Activity {
                 amount = (EditText) findViewById(R.id.editText_amount);
 				new RequestDoTransferTask().execute(to.getText().toString(),
                         amount.getText().toString());
-                //showDialogAndSendMsgOfTransferInfo();
+
+//                //DEBUG
+//                LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//                Criteria criteria = new Criteria();
+//                String bestProvider = locationManager.getBestProvider(criteria, true);
+//                Location location = locationManager.getLastKnownLocation(bestProvider);
+//                showDialogAndSendMsgOfTransferInfo(locationManager.toString());
 			}
 		});
 

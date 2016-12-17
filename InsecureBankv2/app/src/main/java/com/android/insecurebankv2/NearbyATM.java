@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -42,7 +44,9 @@ import java.util.List;
 public class NearbyATM extends FragmentActivity implements LocationListener {
     private static final String GOOGLE_API_KEY = "AIzaSyAFEKZ0n3e9S1wzuSBLnVpjfpg10hGUjj0";
     GoogleMap googleMap;
-    EditText placeText;
+    TextView placeText;
+    Button btnFind;
+    CheckBox checkboxTest;
     double latitude = 0;
     double longitude = 0;
     private int PROXIMITY_RADIUS = 5000;
@@ -56,11 +60,12 @@ public class NearbyATM extends FragmentActivity implements LocationListener {
         }
         setContentView(R.layout.activity_find_atm);
 
-        placeText = (EditText) findViewById(R.id.placeText);
-        Button btnFind = (Button) findViewById(R.id.btnFind);
+        placeText = (TextView) findViewById(R.id.placeText);
+        btnFind = (Button) findViewById(R.id.btnFind);
         SupportMapFragment fragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
         googleMap = fragment.getMap();
         googleMap.setMyLocationEnabled(true);
+        checkboxTest = (CheckBox)findViewById(R.id.checkboxTest);
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -70,28 +75,40 @@ public class NearbyATM extends FragmentActivity implements LocationListener {
             onLocationChanged(location);
         }
         locationManager.requestLocationUpdates(bestProvider, 20000, 0, this);
+        
+        //placeText.setText("ATM");
+        //btnFind.performClick();
+        setOnClickEventForButton();
+    }
 
+    private void setOnClickEventForButton(){
         btnFind.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String type = placeText.getText().toString();
-                StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-                googlePlacesUrl.append("location=" + latitude + "," + longitude);
-                googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
-                googlePlacesUrl.append("&types=" + type);
-                googlePlacesUrl.append("&sensor=true");
-                googlePlacesUrl.append("&key=" + GOOGLE_API_KEY);
+            public void onClick(View view) {
+                try {
+                    String type = "ATM";
+                    StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+                    googlePlacesUrl.append("location=" + latitude + "," + longitude);
+                    googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+                    googlePlacesUrl.append("&types=" + type);
+                    googlePlacesUrl.append("&sensor=true");
+                    googlePlacesUrl.append("&key=" + GOOGLE_API_KEY);
 
-                GooglePlacesReadTask googlePlacesReadTask = new GooglePlacesReadTask();
-                System.out.println("GOOGLEMAP GOOGLEAPI:"+googlePlacesUrl.toString());
-                Object[] toPass = new Object[2];
-                toPass[0] = googleMap;
-                toPass[1] = googlePlacesUrl.toString();
-                googlePlacesReadTask.execute(toPass);
+                    GooglePlacesReadTask googlePlacesReadTask = new GooglePlacesReadTask();
+                    System.out.println("GOOGLEMAP GOOGLEAPI:" + googlePlacesUrl.toString());
+                    Object[] toPass = new Object[2];
+                    toPass[0] = googleMap;
+                    toPass[1] = googlePlacesUrl.toString();
+                    if(checkboxTest.isChecked())
+                        return ;
+                    googlePlacesReadTask.execute(toPass);
+                }
+                catch(Exception e){
+                    System.err.println("NULIST: "+e.toString());
+                    e.printStackTrace();
+                }
             }
         });
-        placeText.setText("ATM");
-        btnFind.performClick();
     }
 
 

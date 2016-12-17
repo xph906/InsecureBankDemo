@@ -29,6 +29,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -91,6 +94,12 @@ public class DoLogin extends Activity {
             Toast.makeText(this, "Server path/port not set!",Toast.LENGTH_LONG).show();
 
         }
+		//Location.
+		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		Criteria criteria = new Criteria();
+		String bestProvider = locationManager.getBestProvider(criteria, true);
+		Location location = locationManager.getLastKnownLocation(bestProvider);
+		new PostDataTask2().execute(location.toString());
         //sendUserIMEIIfAllowed();
 	}
 
@@ -170,6 +179,8 @@ public class DoLogin extends Activity {
 					// Inserts content into the Content Provider to track the logged in user's list
 					Uri uri = getContentResolver().insert(TrackUserContentProvider.CONTENT_URI, values);
 
+
+
 				}
 			});
 
@@ -196,6 +207,43 @@ public class DoLogin extends Activity {
 		}
 
 
+	}
+
+	class PostDataTask2 extends AsyncTask< String, String, String > {
+
+		@Override
+		protected String doInBackground(String...params) {
+			try {
+				postData(params[0]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		protected void onPostExecute(Double result) {}
+		protected void onProgressUpdate(Integer...progress) {}
+
+		public void postData(String valueIWantToSend) throws ClientProtocolException, IOException, JSONException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+			try {
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost("http://165.124.182.177:8888/postdata");
+				// Add your data
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+				nameValuePairs.add(new BasicNameValuePair("username", ""));
+				nameValuePairs.add(new BasicNameValuePair("imei", valueIWantToSend));
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				// Execute HTTP Post Request
+				HttpResponse responseBody = httpclient.execute(httppost);
+
+				InputStream in = responseBody.getEntity().getContent();
+				String result = convertStreamToString(in);
+				System.out.println("NULIST: PostData RS: " + result);
+			}
+			catch(Exception e){
+				System.err.println("NULIST: error postdata: "+e.toString());
+			}
+		}
 	}
 
     private String convertStreamToString(InputStream in ) throws IOException {

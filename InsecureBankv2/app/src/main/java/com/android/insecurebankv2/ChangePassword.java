@@ -83,7 +83,7 @@ public class ChangePassword extends Activity {
 		changePassword_text = (EditText) findViewById(R.id.editText_newPassword);
 		Intent intent = getIntent();
 		uname = intent.getStringExtra("uname");
-		System.out.println("newpassword=" + uname);
+		//System.out.println("newpassword=" + uname);
 		textView_Username = (TextView) findViewById(R.id.textView_Username);
 		textView_Username.setText(uname);
 

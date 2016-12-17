@@ -67,7 +67,8 @@ public class ViewStatement extends Activity {
 			mWebView.setWebViewClient(new MyWebViewClient());
 			WebChromeClient cClient = new WebChromeClient();
 			mWebView.setWebChromeClient(cClient);
-		} else
+		}
+		else
 		{
 			Intent gobacktoPostLogin =new Intent(this,PostLogin.class);
 			startActivity(gobacktoPostLogin);

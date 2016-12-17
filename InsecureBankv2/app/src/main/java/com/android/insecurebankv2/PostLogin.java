@@ -55,7 +55,7 @@ public class PostLogin extends Activity {
 	//	The Button that handles the transfer activity
 	Button transfer_button;
     //  The Textview that handles the root status display
-	TextView root_status;
+	//TextView root_status;
 	//	The Button that handles the view transaction history activity
 	Button statement_button;
 	//	The Button that handles the change password activity
@@ -72,7 +72,7 @@ public class PostLogin extends Activity {
 		Intent intent = getIntent();
 		uname = intent.getStringExtra("uname");
 
-        root_status =(TextView) findViewById(R.id.rootStatus);
+        //root_status =(TextView) findViewById(R.id.rootStatus);
         //   Display root status
         showRootStatus();
 		transfer_button = (Button) findViewById(R.id.trf_button);
@@ -195,14 +195,14 @@ public class PostLogin extends Activity {
     void showRootStatus() {
         boolean isrooted = doesSuperuserApkExist("/system/app/Superuser.apk")||
                 doesSUexist();
-        if(isrooted==true)
-        {
-            root_status.setText("Rooted Device!!");
-        }
-        else
-        {
-            root_status.setText("Device not Rooted!!");
-        }
+//        if(isrooted==true)
+//        {
+//            root_status.setText("Rooted Device!!");
+//        }
+//        else
+//        {
+//            root_status.setText("Device not Rooted!!");
+//        }
     }
 
     private boolean doesSUexist() {
